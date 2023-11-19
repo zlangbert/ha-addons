@@ -1,0 +1,26 @@
+name: Datadog Agent Manager
+description: Configures and runs the Datadog Agent for system monitoring
+version: "0.1.0"
+slug: datadog-agent-manager
+arch:
+  - aarch64
+  - amd64
+startup: system
+init: false
+docker_api: true
+options:
+  site: datadoghq.com
+  features:
+    logging_enabled: true
+    process_collection_enabled: true
+    apm_enabled: false
+schema:
+  api_key: str
+  site: str
+  features:
+    logging_enabled: bool
+    process_collection_enabled: bool
+    apm_enabled: bool
+  container_name: str?
+  container_image: str?
+  container_tag: str?

@@ -1,0 +1,7 @@
+logs:
+  - type: journald
+    container_mode: true
+    exclude_matches:
+      # exclude the agent container as logs are already collected by the addon container
+      # TODO: template this with the container name from the options
+      - CONTAINER_NAME=dd-agent

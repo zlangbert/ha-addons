@@ -1,0 +1,9 @@
+{
+  "api_key": "abc123",
+  "site": "datadoghq.com",
+  "features": {
+    "logging_enabled": true,
+    "process_collection_enabled": true,
+    "apm_enabled": false
+  }
+}

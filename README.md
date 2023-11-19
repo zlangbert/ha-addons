@@ -12,3 +12,6 @@ https://github.com/zlangbert/ha-addons
 ```
 
 ## Add-ons in this repository
+
+- **[Datadog Agent Manager](/datadog-agent-manager/README.md)**: Configures and runs the Datadog Agent on your Home
+  Assistant host for system monitoring.
