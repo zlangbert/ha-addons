@@ -2,6 +2,7 @@ package options
 
 import (
 	"encoding/json"
+	"fmt"
 	"log/slog"
 	"os"
 )
@@ -50,4 +51,8 @@ func Load(path string) AddonOptions {
 	}
 
 	return options
+}
+
+func (o *AddonOptions) GetImageRef() string {
+	return fmt.Sprintf("%s:%s", o.ContainerImage, o.ContainerTag)
 }

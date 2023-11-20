@@ -9,9 +9,15 @@ import (
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
+	"github.com/docker/docker/api/types/filters"
 	"github.com/docker/docker/client"
 	"github.com/zlangbert/haos-addons/datadog-agent/internal/feature"
 	"github.com/zlangbert/haos-addons/datadog-agent/internal/options"
+)
+
+var (
+	ManagedByLabelKey   = "managed-by"
+	ManagedByLabelValue = "datadog-agent-manager"
 )
 
 type Runner struct {
@@ -58,16 +64,17 @@ func New(options ...func(*Runner)) *Runner {
 func (r *Runner) Run(ctx context.Context) error {
 	slog.Info("starting datadog agent")
 
-	// TODO: check for existing container
-
-	imageRef := fmt.Sprintf("%s:%s", r.options.ContainerImage, r.options.ContainerTag)
-
-	err := r.pullImage(ctx, imageRef)
+	err := r.removeExistingContainers(ctx)
 	if err != nil {
 		return err
 	}
 
-	err = r.createContainer(ctx, imageRef)
+	err = r.pullImage(ctx)
+	if err != nil {
+		return err
+	}
+
+	err = r.createContainer(ctx)
 	if err != nil {
 		return err
 	}
@@ -120,10 +127,33 @@ func (r *Runner) Stop(ctx context.Context) error {
 	return nil
 }
 
-func (r *Runner) pullImage(ctx context.Context, imageRef string) error {
-	slog.Info("pulling image", "ref", imageRef)
+func (r *Runner) removeExistingContainers(ctx context.Context) error {
+	existing, err := r.client.ContainerList(ctx, types.ContainerListOptions{
+		Filters: filters.NewArgs(
+			filters.Arg("label", fmt.Sprintf("%s=%s", ManagedByLabelKey, ManagedByLabelValue)),
+		),
+	})
+	if err != nil {
+		return err
+	}
 
-	pull, err := r.client.ImagePull(ctx, imageRef, types.ImagePullOptions{})
+	for _, c := range existing {
+		slog.Warn("removing existing datadog agent container", "id", c.ID)
+		err := r.client.ContainerRemove(ctx, c.ID, types.ContainerRemoveOptions{
+			Force: true,
+		})
+		if err != nil {
+			return fmt.Errorf("failed to remove existing agent container: %w", err)
+		}
+	}
+
+	return nil
+}
+
+func (r *Runner) pullImage(ctx context.Context) error {
+	slog.Info("pulling image", "ref", r.options.GetImageRef())
+
+	pull, err := r.client.ImagePull(ctx, r.options.GetImageRef(), types.ImagePullOptions{})
 	if err != nil {
 		return fmt.Errorf("failed to pull image: %w", err)
 	}
@@ -143,14 +173,14 @@ func (r *Runner) pullImage(ctx context.Context, imageRef string) error {
 	return nil
 }
 
-func (r *Runner) createContainer(ctx context.Context, imageRef string) error {
+func (r *Runner) createContainer(ctx context.Context) error {
 	// base configs
 	cCfg := &container.Config{
-		Image:   imageRef,
+		Image:   r.options.GetImageRef(),
 		Env:     []string{},
 		Volumes: map[string]struct{}{},
 		Labels: map[string]string{
-			"managed_by": "datadog-agent-manager",
+			ManagedByLabelKey: ManagedByLabelValue,
 		},
 	}
 	hCfg := &container.HostConfig{
