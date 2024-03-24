@@ -117,7 +117,7 @@ func (r *Runner) Stop(ctx context.Context) error {
 
 	slog.Info("removing datadog agent container")
 
-	err = r.client.ContainerRemove(ctx, r.containerID, types.ContainerRemoveOptions{
+	err = r.client.ContainerRemove(ctx, r.containerID, container.RemoveOptions{
 		Force: true,
 	})
 	if err != nil {
@@ -128,7 +128,7 @@ func (r *Runner) Stop(ctx context.Context) error {
 }
 
 func (r *Runner) removeExistingContainers(ctx context.Context) error {
-	existing, err := r.client.ContainerList(ctx, types.ContainerListOptions{
+	existing, err := r.client.ContainerList(ctx, container.ListOptions{
 		All: true,
 		Filters: filters.NewArgs(
 			filters.Arg("label", fmt.Sprintf("%s=%s", ManagedByLabelKey, ManagedByLabelValue)),
@@ -140,7 +140,7 @@ func (r *Runner) removeExistingContainers(ctx context.Context) error {
 
 	for _, c := range existing {
 		slog.Warn("removing existing datadog agent container", "id", c.ID)
-		err := r.client.ContainerRemove(ctx, c.ID, types.ContainerRemoveOptions{
+		err := r.client.ContainerRemove(ctx, c.ID, container.RemoveOptions{
 			Force: true,
 		})
 		if err != nil {
@@ -232,7 +232,7 @@ func (r *Runner) startContainer(ctx context.Context) error {
 
 	// start container
 	slog.Info("starting datadog agent container")
-	err := r.client.ContainerStart(ctx, r.containerID, types.ContainerStartOptions{})
+	err := r.client.ContainerStart(ctx, r.containerID, container.StartOptions{})
 	if err != nil {
 		return fmt.Errorf("failed to start Datadog agent container: %w", err)
 	}
@@ -241,7 +241,7 @@ func (r *Runner) startContainer(ctx context.Context) error {
 }
 
 func (r *Runner) captureLogs(ctx context.Context) (*types.HijackedResponse, error) {
-	out, err := r.client.ContainerAttach(ctx, r.containerID, types.ContainerAttachOptions{
+	out, err := r.client.ContainerAttach(ctx, r.containerID, container.AttachOptions{
 		Stream: true,
 		Stdout: true,
 		Stderr: true,
