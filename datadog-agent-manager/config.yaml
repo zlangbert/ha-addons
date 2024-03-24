@@ -1,6 +1,6 @@
 name: Datadog Agent Manager
 description: Configures and runs the Datadog Agent for system monitoring
-version: "0.2.0"
+version: "0.2.1"
 slug: datadog-agent-manager
 arch:
   - aarch64
