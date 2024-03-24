@@ -129,6 +129,7 @@ func (r *Runner) Stop(ctx context.Context) error {
 
 func (r *Runner) removeExistingContainers(ctx context.Context) error {
 	existing, err := r.client.ContainerList(ctx, types.ContainerListOptions{
+		All: true,
 		Filters: filters.NewArgs(
 			filters.Arg("label", fmt.Sprintf("%s=%s", ManagedByLabelKey, ManagedByLabelValue)),
 		),
