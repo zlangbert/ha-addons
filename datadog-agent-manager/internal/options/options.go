@@ -25,9 +25,10 @@ type AddonOptions struct {
 }
 
 type AddonFeatures struct {
-	LoggingEnabled           bool `json:"logging_enabled"`
-	ProcessCollectionEnabled bool `json:"process_collection_enabled"`
-	ApmEnabled               bool `json:"apm_enabled"`
+	LoggingEnabled                      bool `json:"logging_enabled"`
+	ProcessCollectionEnabled            bool `json:"process_collection_enabled"`
+	NetworkPerformanceMonitoringEnabled bool `json:"network_performance_monitoring_enabled"`
+	ApmEnabled                          bool `json:"apm_enabled"`
 }
 
 func Load(path string) AddonOptions {

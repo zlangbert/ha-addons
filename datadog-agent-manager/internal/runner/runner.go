@@ -187,6 +187,7 @@ func (r *Runner) createContainer(ctx context.Context) error {
 	hCfg := &container.HostConfig{
 		CgroupnsMode: container.CgroupnsModeHost,
 		PidMode:      "host",
+		Privileged:   true,
 	}
 
 	// apply feature BeforeCreate hooks

@@ -1,6 +1,6 @@
 name: Datadog Agent Manager
 description: Configures and runs the Datadog Agent for system monitoring
-version: "0.2.2"
+version: "0.3.0"
 slug: datadog-agent-manager
 arch:
   - aarch64
@@ -13,6 +13,7 @@ options:
   features:
     logging_enabled: true
     process_collection_enabled: true
+    network_performance_monitoring_enabled: false
     apm_enabled: false
 schema:
   api_key: str
@@ -20,6 +21,7 @@ schema:
   features:
     logging_enabled: bool
     process_collection_enabled: bool
+    network_performance_monitoring_enabled: bool
     apm_enabled: bool
   container_name: str?
   container_image: str?

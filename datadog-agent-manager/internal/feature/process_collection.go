@@ -1,6 +1,9 @@
 package feature
 
-import "context"
+import (
+	"context"
+	"log/slog"
+)
 
 var _ Feature = (*ProcessCollection)(nil)
 
@@ -14,6 +17,8 @@ func (f *ProcessCollection) BeforeCreate(_ context.Context, adapter runnerAdapte
 	if !options.Features.ProcessCollectionEnabled {
 		return nil
 	}
+
+	slog.Info("enabling process collection")
 
 	adapter.AddEnv("DD_PROCESS_AGENT_ENABLED", "true")
 	adapter.AddBindMount("/etc/passwd", "/etc/passwd", "ro")

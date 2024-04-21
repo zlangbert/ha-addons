@@ -3,6 +3,7 @@ package feature
 import (
 	"context"
 	"fmt"
+	"log/slog"
 )
 
 var _ Feature = (*Core)(nil)
@@ -13,6 +14,8 @@ type Core struct {
 
 func (f *Core) BeforeCreate(_ context.Context, adapter runnerAdapterBeforeCreate) error {
 	options := adapter.GetOptions()
+
+	slog.Info("enabling core telemetry collection")
 
 	adapter.AddEnv("DD_API_KEY", options.ApiKey)
 	adapter.AddEnv("DD_SITE", options.Site)

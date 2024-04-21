@@ -3,6 +3,7 @@ package feature
 import (
 	"context"
 	"fmt"
+	"log/slog"
 )
 
 var _ Feature = (*Logging)(nil)
@@ -17,6 +18,8 @@ func (f *Logging) BeforeCreate(_ context.Context, adapter runnerAdapterBeforeCre
 	if !options.Features.LoggingEnabled {
 		return nil
 	}
+
+	slog.Info("enabling log collection")
 
 	adapter.AddEnv("DD_LOGS_ENABLED", "true")
 

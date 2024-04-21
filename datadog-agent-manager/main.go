@@ -8,7 +8,7 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 	"github.com/zlangbert/haos-addons/datadog-agent/internal/feature"
 	"github.com/zlangbert/haos-addons/datadog-agent/internal/options"
 	"github.com/zlangbert/haos-addons/datadog-agent/internal/runner"
@@ -52,6 +52,7 @@ func start(ctx *cli.Context) error {
 		runner.WithFeature(&feature.Logging{}),
 		runner.WithFeature(&feature.ProcessCollection{}),
 		runner.WithFeature(&feature.Apm{}),
+		runner.WithFeature(&feature.SystemProbe{}),
 	)
 
 	// set up shutdown channel
